@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-black: #08060b;
+  --bg-panel: #0f0b14;
+  --navy: #0a1628;
+  --navy-deep: #06101c;
+  --purple-primary: #6b3fa0;
+  --purple-glow: #8b5cf6;
+  --gold: #e8b75c;
+  --gold-bright: #f4c860;
+  --text-primary: #f5f1ea;
+  --text-muted: #a99fb0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-black);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+/* Visible keyboard focus — gold outline */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-black);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--purple-primary);
+  border-radius: 4px;
+}
+
+@layer utilities {
+  .text-gradient-brand {
+    background: linear-gradient(135deg, #f4a261 0%, #e07a5f 40%, #6b3fa0 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  .section-pad {
+    @apply py-24 md:py-32 lg:py-40;
+  }
+}
