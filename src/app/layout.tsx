@@ -41,6 +41,7 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body
         className={`${playfair.variable} ${manrope.variable} ${petitFormal.variable} font-sans antialiased bg-bg-black text-text-primary`}
+        suppressHydrationWarning
       >
         {children}
       </body>

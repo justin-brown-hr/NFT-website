@@ -1,7 +1,8 @@
 "use client";
 
 import { ArrowRight, ShoppingBag } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import { useSafeReducedMotion } from "@/hooks/useSafeReducedMotion";
 import { LINKS } from "@/lib/site";
 
 const CARDS = [
@@ -59,7 +60,7 @@ const CARDS = [
 ] as const;
 
 export default function Connect() {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useSafeReducedMotion();
 
   return (
     <section id="connect" className="section-pad relative overflow-hidden">

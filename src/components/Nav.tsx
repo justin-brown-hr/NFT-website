@@ -2,15 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+import { useSafeReducedMotion } from "@/hooks/useSafeReducedMotion";
 import { NAV_LINKS } from "@/lib/site";
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("HOME");
   const [menuOpen, setMenuOpen] = useState(false);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useSafeReducedMotion();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);

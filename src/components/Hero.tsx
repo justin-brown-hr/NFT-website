@@ -1,11 +1,12 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import { useSafeReducedMotion } from "@/hooks/useSafeReducedMotion";
 import { LINKS } from "@/lib/site";
 
 export default function Hero() {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useSafeReducedMotion();
 
   const fadeUp = (delay = 0) =>
     reduceMotion

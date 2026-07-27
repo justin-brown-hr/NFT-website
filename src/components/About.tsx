@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import { useSafeReducedMotion } from "@/hooks/useSafeReducedMotion";
 
 function HexIcon({ children }: { children: React.ReactNode }) {
   return (
@@ -75,7 +76,7 @@ const FEATURES = [
 ] as const;
 
 export default function About() {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useSafeReducedMotion();
 
   return (
     <section
