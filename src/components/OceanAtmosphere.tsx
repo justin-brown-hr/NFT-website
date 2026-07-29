@@ -11,12 +11,36 @@ type Particle = {
   drift: number;
   alpha: number;
   phase: number;
+  hue: number;
 };
 
-/**
- * Atmospheric overlay — floating particles, light rays, water ripples.
- * Designed to sit on top of the hero image as one continuous scene.
- */
+type Ripple = {
+  x: number;
+  y: number;
+  radius: number;
+  maxRadius: number;
+  alpha: number;
+  speed: number;
+};
+
+type Caustic = {
+  x: number;
+  y: number;
+  size: number;
+  alpha: number;
+  phase: number;
+  drift: number;
+};
+
+type Ray = {
+  x: number;       // 0–1 of width
+  width: number;   // 0–1 of width
+  angle: number;   // skew deg
+  alpha: number;
+  hue: number;
+  phase: number;
+};
+
 export default function OceanAtmosphere() {
   const reduceMotion = useSafeReducedMotion();
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -32,53 +56,201 @@ export default function OceanAtmosphere() {
     let frame = 0;
     let raf = 0;
     let particles: Particle[] = [];
+    let ripples: Ripple[] = [];
+    let caustics: Caustic[] = [];
+    let rays: Ray[] = [];
+    let canvasW = 0;
+    let canvasH = 0;
+
+    const rand = (min: number, max: number) => min + Math.random() * (max - min);
+
+    const spawnRipple = (w: number, h: number): Ripple => ({
+      x: rand(w * 0.1, w * 0.9),
+      y: rand(h * 0.42, h * 0.88),
+      radius: rand(2, 12),
+      maxRadius: rand(80, 240),
+      alpha: rand(0.45, 0.85),
+      speed: rand(0.7, 1.8),
+    });
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const { width, height } = canvas.getBoundingClientRect();
-      canvas.width = Math.max(1, Math.floor(width * dpr));
-      canvas.height = Math.max(1, Math.floor(height * dpr));
+      const rect = canvas.getBoundingClientRect();
+      canvasW = rect.width;
+      canvasH = rect.height;
+      canvas.width = Math.max(1, Math.floor(canvasW * dpr));
+      canvas.height = Math.max(1, Math.floor(canvasH * dpr));
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const count = Math.min(55, Math.floor((width * height) / 22000));
+      // More particles, spread wider
+      const count = Math.min(130, Math.floor((canvasW * canvasH) / 8000));
       particles = Array.from({ length: count }, () => ({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        r: 0.5 + Math.random() * 2.2,
-        speed: 0.12 + Math.random() * 0.45,
-        drift: (Math.random() - 0.5) * 0.28,
-        alpha: 0.12 + Math.random() * 0.45,
-        phase: Math.random() * Math.PI * 2,
+        x: rand(0, canvasW),
+        y: rand(0, canvasH),
+        r: rand(0.7, 3.6),
+        speed: rand(0.1, 0.7),
+        drift: rand(-0.3, 0.3),
+        alpha: rand(0.25, 0.9),
+        phase: rand(0, Math.PI * 2),
+        hue: Math.random() < 0.72 ? rand(170, 220) : rand(40, 52),
       }));
+
+      // More caustics, larger and brighter
+      const cCount = Math.min(18, Math.floor((canvasW * canvasH) / 28000));
+      caustics = Array.from({ length: cCount }, () => ({
+        x: rand(0, canvasW),
+        y: rand(canvasH * 0.25, canvasH * 0.78),
+        size: rand(55, 160),
+        alpha: rand(0.08, 0.22),
+        phase: rand(0, Math.PI * 2),
+        drift: rand(-0.22, 0.22),
+      }));
+
+      // Canvas-drawn light rays
+      rays = Array.from({ length: 6 }, (_, i) => ({
+        x: 0.08 + i * 0.16 + rand(-0.04, 0.04),
+        width: rand(0.05, 0.13),
+        angle: rand(-18, -4),
+        alpha: rand(0.12, 0.32),
+        hue: Math.random() < 0.6 ? 195 : Math.random() < 0.5 ? 46 : 270,
+        phase: rand(0, Math.PI * 2),
+      }));
+
+      // Seed more ripples for immediate impact
+      ripples = Array.from({ length: 5 }, () => {
+        const rp = spawnRipple(canvasW, canvasH);
+        rp.radius = rand(0, rp.maxRadius * 0.5); // stagger start positions
+        return rp;
+      });
     };
 
     const draw = () => {
-      const { width, height } = canvas.getBoundingClientRect();
-      ctx.clearRect(0, 0, width, height);
+      ctx.clearRect(0, 0, canvasW, canvasH);
       frame += 1;
 
+      // ── 1. Canvas light rays ──────────────────────────────────────────────
+      ctx.save();
+      for (const ray of rays) {
+        const pulse = 0.55 + Math.sin(frame * 0.014 + ray.phase) * 0.45;
+        const x = ray.x * canvasW;
+        const w = ray.width * canvasW;
+        const skewOffset = Math.tan((ray.angle * Math.PI) / 180) * canvasH;
+
+        const grd = ctx.createLinearGradient(x, 0, x, canvasH * 1.4);
+        grd.addColorStop(0, `hsla(${ray.hue}, 85%, 72%, ${ray.alpha * pulse})`);
+        grd.addColorStop(0.35, `hsla(${ray.hue}, 80%, 65%, ${ray.alpha * pulse * 0.55})`);
+        grd.addColorStop(0.7, `hsla(${ray.hue}, 75%, 60%, ${ray.alpha * pulse * 0.18})`);
+        grd.addColorStop(1, `hsla(${ray.hue}, 70%, 55%, 0)`);
+
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x + w, 0);
+        ctx.lineTo(x + w + skewOffset, canvasH * 1.4);
+        ctx.lineTo(x + skewOffset, canvasH * 1.4);
+        ctx.closePath();
+        ctx.fillStyle = grd;
+        ctx.globalAlpha = 1;
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // ── 2. Caustics ───────────────────────────────────────────────────────
+      for (const c of caustics) {
+        c.x += c.drift + Math.sin(frame * 0.006 + c.phase) * 0.25;
+        c.phase += 0.005;
+        if (c.x < -c.size) c.x = canvasW + c.size;
+        if (c.x > canvasW + c.size) c.x = -c.size;
+
+        const pulse = 0.65 + Math.sin(frame * 0.016 + c.phase) * 0.35;
+        const w = c.size * (1 + Math.sin(c.phase * 1.4) * 0.3);
+        const h = w * (0.38 + Math.cos(c.phase * 0.8) * 0.12);
+
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.scale(1, h / Math.max(w, 1));
+        const cGrd = ctx.createRadialGradient(0, 0, 0, 0, 0, w);
+        cGrd.addColorStop(0, `rgba(77,184,217,${c.alpha * pulse * 2.2})`);
+        cGrd.addColorStop(0.45, `rgba(77,184,217,${c.alpha * pulse * 1.1})`);
+        cGrd.addColorStop(0.75, `rgba(122,212,240,${c.alpha * pulse * 0.4})`);
+        cGrd.addColorStop(1, `rgba(77,184,217,0)`);
+        ctx.beginPath();
+        ctx.arc(0, 0, w, 0, Math.PI * 2);
+        ctx.fillStyle = cGrd;
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // ── 3. Bioluminescent particles ───────────────────────────────────────
       for (const p of particles) {
         p.y -= p.speed;
-        p.x += p.drift + Math.sin(frame * 0.01 + p.phase) * 0.12;
-        if (p.y < -8) {
-          p.y = height + 8;
-          p.x = Math.random() * width;
-        }
-        if (p.x < -8) p.x = width + 8;
-        if (p.x > width + 8) p.x = -8;
+        p.x += p.drift + Math.sin(frame * 0.009 + p.phase) * 0.18;
+        if (p.y < -10) { p.y = canvasH + 10; p.x = rand(0, canvasW); }
+        if (p.x < -10) p.x = canvasW + 10;
+        if (p.x > canvasW + 10) p.x = -10;
 
-        const pulse = 0.65 + Math.sin(frame * 0.03 + p.phase) * 0.35;
+        const pulse = 0.5 + Math.sin(frame * 0.028 + p.phase) * 0.5;
+        const a = p.alpha * pulse;
+
+        // large soft glow halo
+        const haloR = p.r * 5.5;
+        const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, haloR);
+        grd.addColorStop(0, `hsla(${p.hue}, 95%, 80%, ${a * 0.95})`);
+        grd.addColorStop(0.3, `hsla(${p.hue}, 90%, 70%, ${a * 0.6})`);
+        grd.addColorStop(0.65, `hsla(${p.hue}, 85%, 65%, ${a * 0.2})`);
+        grd.addColorStop(1, `hsla(${p.hue}, 80%, 60%, 0)`);
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(210, 190, 255, ${p.alpha * pulse})`;
+        ctx.arc(p.x, p.y, haloR, 0, Math.PI * 2);
+        ctx.fillStyle = grd;
         ctx.fill();
 
-        if (p.r > 1.3) {
-          ctx.beginPath();
-          ctx.arc(p.x - p.r * 0.25, p.y - p.r * 0.25, p.r * 0.3, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 240, 200, ${0.22 * pulse})`;
-          ctx.fill();
+        // bright solid core
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.hue}, 100%, 92%, ${Math.min(a * 1.3, 1)})`;
+        ctx.fill();
+      }
+
+      // ── 4. Water ripple rings ─────────────────────────────────────────────
+      for (let i = ripples.length - 1; i >= 0; i--) {
+        const rp = ripples[i];
+        rp.radius += rp.speed;
+        rp.alpha *= 0.983;
+
+        if (rp.radius > rp.maxRadius || rp.alpha < 0.015) {
+          ripples[i] = spawnRipple(canvasW, canvasH);
+          continue;
         }
+
+        const fade = 1 - rp.radius / rp.maxRadius;
+        const a = rp.alpha * fade;
+
+        // outer glow ring
+        ctx.beginPath();
+        ctx.ellipse(rp.x, rp.y, rp.radius, rp.radius * 0.3, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(77,184,217,${a * 0.9})`;
+        ctx.lineWidth = 2.2;
+        ctx.stroke();
+
+        // middle ring — slightly inside
+        ctx.beginPath();
+        ctx.ellipse(rp.x, rp.y, rp.radius * 0.78, rp.radius * 0.78 * 0.3, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(122,212,240,${a * 0.55})`;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        // gold inner echo
+        if (rp.radius > 25) {
+          ctx.beginPath();
+          ctx.ellipse(rp.x, rp.y, rp.radius * 0.5, rp.radius * 0.5 * 0.3, 0, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(232,183,92,${a * 0.45})`;
+          ctx.lineWidth = 0.9;
+          ctx.stroke();
+        }
+      }
+
+      // Spawn ripples more frequently for density
+      if (frame % 90 === 0 && ripples.length < 12) {
+        ripples.push(spawnRipple(canvasW, canvasH));
       }
 
       raf = requestAnimationFrame(draw);
@@ -87,7 +259,6 @@ export default function OceanAtmosphere() {
     resize();
     draw();
     window.addEventListener("resize", resize);
-
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
@@ -96,67 +267,135 @@ export default function OceanAtmosphere() {
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-      {/* Light rays — blended into the scene */}
-      <div
-        className={`absolute inset-0 opacity-50 mix-blend-screen ${reduceMotion ? "" : "animate-ocean-rays"}`}
-      >
-        <div
-          className="absolute -top-[20%] left-[18%] h-[140%] w-[14%] origin-top"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(180, 150, 255, 0.28) 0%, rgba(232, 183, 92, 0.08) 40%, transparent 75%)",
-            transform: "skewX(-12deg)",
-          }}
-        />
-        <div
-          className="absolute -top-[10%] left-[42%] h-[130%] w-[10%] origin-top"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(232, 183, 92, 0.18) 0%, rgba(150, 120, 255, 0.06) 45%, transparent 70%)",
-            transform: "skewX(-8deg)",
-          }}
-        />
-        <div
-          className="absolute -top-[15%] left-[58%] h-[135%] w-[12%] origin-top"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(160, 200, 255, 0.16) 0%, rgba(107, 63, 160, 0.08) 50%, transparent 78%)",
-            transform: "skewX(-14deg)",
-          }}
-        />
-      </div>
 
-      {/* Soft shimmer across the image */}
+      {/* ── Deep ocean base — stronger teal presence ────────────────────────── */}
       <div
-        className={`absolute inset-x-0 top-0 h-1/2 opacity-35 mix-blend-soft-light ${reduceMotion ? "" : "animate-ocean-shimmer"}`}
+        className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 70% 45% at 50% 10%, rgba(200, 180, 255, 0.35) 0%, transparent 70%)",
+            "radial-gradient(ellipse 100% 60% at 50% 90%, rgba(4,40,64,0.7) 0%, rgba(4,28,46,0.35) 55%, transparent 75%), " +
+            "radial-gradient(ellipse 55% 40% at 50% 15%, rgba(8,18,36,0.5) 0%, transparent 60%)",
         }}
       />
 
-      {/* Floating particles */}
-      {!reduceMotion && (
-        <canvas ref={canvasRef} className="absolute inset-0 h-full w-full mix-blend-screen" />
-      )}
-
-      {/* Ripple / reflection near the floor */}
-      <div className="absolute inset-x-0 bottom-0 h-[45%]">
+      {/* ── CSS light rays — thick, visible, animated ───────────────────────── */}
+      <div
+        className={`absolute inset-0 mix-blend-screen ${reduceMotion ? "opacity-40" : "animate-nerina-rays opacity-70"}`}
+      >
+        {/* bold gold-aqua center beam */}
         <div
-          className={`absolute inset-0 opacity-45 mix-blend-soft-light ${reduceMotion ? "" : "animate-ocean-ripple"}`}
+          className="absolute -top-[10%] left-[43%] h-[150%] w-[7%] origin-top"
           style={{
-            background:
-              "repeating-radial-gradient(ellipse 120% 40% at 50% 115%, transparent 0%, transparent 42%, rgba(180, 160, 255, 0.1) 46%, transparent 52%)",
+            background: "linear-gradient(180deg, rgba(232,183,92,0.38) 0%, rgba(77,184,217,0.18) 35%, transparent 68%)",
+            transform: "skewX(-5deg)",
+            filter: "blur(3px)",
           }}
         />
+        {/* wide left aqua beam */}
         <div
-          className={`absolute inset-0 opacity-35 mix-blend-soft-light ${reduceMotion ? "" : "animate-ocean-ripple-slow"}`}
+          className="absolute -top-[18%] left-[18%] h-[145%] w-[14%] origin-top"
           style={{
-            background:
-              "repeating-radial-gradient(ellipse 100% 35% at 45% 125%, transparent 0%, transparent 38%, rgba(232, 183, 92, 0.07) 44%, transparent 50%)",
+            background: "linear-gradient(180deg, rgba(77,184,217,0.32) 0%, rgba(122,212,240,0.14) 40%, transparent 70%)",
+            transform: "skewX(-16deg)",
+            filter: "blur(5px)",
+          }}
+        />
+        {/* right teal beam */}
+        <div
+          className="absolute -top-[12%] left-[60%] h-[135%] w-[11%] origin-top"
+          style={{
+            background: "linear-gradient(180deg, rgba(122,212,240,0.24) 0%, rgba(77,184,217,0.1) 42%, transparent 72%)",
+            transform: "skewX(-11deg)",
+            filter: "blur(5px)",
+          }}
+        />
+        {/* far-left deep beam */}
+        <div
+          className="absolute -top-[22%] left-[5%] h-[140%] w-[8%] origin-top"
+          style={{
+            background: "linear-gradient(180deg, rgba(77,184,217,0.18) 0%, rgba(107,63,160,0.06) 50%, transparent 72%)",
+            transform: "skewX(-20deg)",
+            filter: "blur(7px)",
+          }}
+        />
+        {/* far-right purple-teal accent */}
+        <div
+          className="absolute -top-[8%] left-[76%] h-[125%] w-[8%] origin-top"
+          style={{
+            background: "linear-gradient(180deg, rgba(139,92,246,0.22) 0%, rgba(77,184,217,0.1) 45%, transparent 70%)",
+            transform: "skewX(-8deg)",
+            filter: "blur(6px)",
           }}
         />
       </div>
+
+      {/* ── Canvas: rays + caustics + particles + ripples ───────────────────── */}
+      {!reduceMotion && (
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 h-full w-full mix-blend-screen"
+        />
+      )}
+
+      {/* ── Waterline shimmer — strong horizontal glow ──────────────────────── */}
+      <div
+        className={`absolute inset-x-0 mix-blend-soft-light ${reduceMotion ? "opacity-35" : "animate-nerina-shimmer opacity-60"}`}
+        style={{
+          top: "35%",
+          height: "26%",
+          background:
+            "linear-gradient(180deg, transparent 0%, rgba(77,184,217,0.28) 30%, rgba(122,212,240,0.42) 52%, rgba(77,184,217,0.2) 78%, transparent 100%)",
+          filter: "blur(18px)",
+        }}
+      />
+
+      {/* ── Aqua glow burst — centrepiece identity mark ─────────────────────── */}
+      <div
+        className={`absolute left-1/2 -translate-x-1/2 rounded-full mix-blend-screen ${reduceMotion ? "opacity-25" : "animate-nerina-pulse opacity-35"}`}
+        style={{
+          top: "28%",
+          width: "55vmin",
+          height: "55vmin",
+          background:
+            "radial-gradient(circle, rgba(77,184,217,0.45) 0%, rgba(122,212,240,0.2) 40%, rgba(77,184,217,0.06) 70%, transparent 100%)",
+          filter: "blur(32px)",
+        }}
+      />
+
+      {/* ── Deep floor glow — anchors the scene ────────────────────────────── */}
+      <div
+        className={`absolute inset-x-0 bottom-0 h-[52%] ${reduceMotion ? "" : "animate-nerina-depth"}`}
+        style={{
+          background:
+            "radial-gradient(ellipse 90% 55% at 50% 105%, rgba(4,40,64,0.75) 0%, rgba(4,28,46,0.35) 50%, transparent 80%)",
+        }}
+      />
+
+      {/* ── CSS ripple rings — layered for depth ────────────────────────────── */}
+      <div className="absolute inset-x-0 bottom-0 h-[45%]">
+        <div
+          className={`absolute inset-0 mix-blend-soft-light ${reduceMotion ? "opacity-25" : "animate-water-ripple opacity-45"}`}
+          style={{
+            background:
+              "repeating-radial-gradient(ellipse 115% 38% at 50% 115%, transparent 0%, transparent 36%, rgba(77,184,217,0.18) 43%, transparent 52%)",
+          }}
+        />
+        <div
+          className={`absolute inset-0 mix-blend-soft-light ${reduceMotion ? "opacity-18" : "animate-water-ripple-slow opacity-32"}`}
+          style={{
+            background:
+              "repeating-radial-gradient(ellipse 95% 32% at 46% 122%, transparent 0%, transparent 32%, rgba(232,183,92,0.12) 39%, transparent 48%)",
+          }}
+        />
+        <div
+          className={`absolute inset-0 mix-blend-screen ${reduceMotion ? "opacity-10" : "animate-water-ripple-mid opacity-20"}`}
+          style={{
+            background:
+              "repeating-radial-gradient(ellipse 80% 25% at 54% 120%, transparent 0%, transparent 40%, rgba(122,212,240,0.14) 46%, transparent 54%)",
+          }}
+        />
+      </div>
+
     </div>
   );
 }
