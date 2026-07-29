@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Manrope, Petit_Formal_Script } from "next/font/google";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import ClickRippleCanvas from "@/components/ClickRippleCanvas";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -49,6 +50,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <Nav />
+        <ClickRippleCanvas />
         {children}
         <Footer />
       </body>

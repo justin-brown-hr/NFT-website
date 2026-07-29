@@ -33,12 +33,26 @@ type Caustic = {
 };
 
 type Ray = {
-  x: number;       // 0–1 of width
-  width: number;   // 0–1 of width
-  angle: number;   // skew deg
+  x: number;
+  width: number;
+  angle: number;
   alpha: number;
   hue: number;
   phase: number;
+};
+
+/** A click-spawned ripple burst — more rings, brighter, instant start */
+type ClickRipple = {
+  x: number;
+  y: number;
+  rings: {
+    radius: number;
+    maxRadius: number;
+    alpha: number;
+    speed: number;
+    lineWidth: number;
+    hue: number; // aqua=195, gold=46
+  }[];
 };
 
 export default function OceanAtmosphere() {
@@ -259,6 +273,7 @@ export default function OceanAtmosphere() {
     resize();
     draw();
     window.addEventListener("resize", resize);
+
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
@@ -266,7 +281,7 @@ export default function OceanAtmosphere() {
   }, [reduceMotion]);
 
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+    <div className="absolute inset-0 overflow-hidden" aria-hidden style={{ pointerEvents: "none" }}>
 
       {/* ── Deep ocean base — stronger teal presence ────────────────────────── */}
       <div
@@ -329,7 +344,7 @@ export default function OceanAtmosphere() {
         />
       </div>
 
-      {/* ── Canvas: rays + caustics + particles + ripples ───────────────────── */}
+      {/* ── Canvas — pointer-events re-enabled so clicks register ───────────── */}
       {!reduceMotion && (
         <canvas
           ref={canvasRef}

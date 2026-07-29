@@ -104,7 +104,7 @@ export default function Hero() {
           className="mt-12 w-full max-w-3xl md:mt-14"
         >
           <ul className="flex flex-wrap items-center justify-center gap-x-1 gap-y-3 sm:gap-x-0">
-            {EXPLORE_LINKS.map((link, i) => (
+            {(EXPLORE_LINKS as ReadonlyArray<{ label: string; href: string; external: boolean }>).map((link, i) => (
               <li key={link.label} className="flex items-center">
                 {i > 0 && (
                   <span
@@ -122,10 +122,8 @@ export default function Hero() {
                       className="group relative px-2 py-1 text-xs font-medium uppercase tracking-wide-label text-gold transition-colors hover:text-gold-bright md:text-[13px]"
                     >
                       {link.label}
-                      {/* gold underline that grows on hover */}
                       <span className="absolute inset-x-2 -bottom-0.5 h-px origin-left scale-x-0 bg-gold transition-transform duration-300 group-hover:scale-x-100" aria-hidden />
                     </a>
-                    {/* Nerina prompt */}
                     <a
                       href={link.href}
                       target="_blank"
@@ -133,7 +131,6 @@ export default function Hero() {
                       aria-label="Click Nerina — enter the collection"
                       className="group flex items-center gap-1.5 rounded-full border border-gold/25 bg-gold/8 px-2.5 py-1 transition-all duration-300 hover:border-gold/55 hover:bg-gold/14"
                     >
-                      {/* hummingbird icon */}
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src="/images/icon-hummingbird.svg"
