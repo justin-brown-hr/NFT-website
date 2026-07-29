@@ -1,30 +1,16 @@
 "use client";
 
-import { ArrowRight, ShoppingBag } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useSafeReducedMotion } from "@/hooks/useSafeReducedMotion";
 import { LINKS } from "@/lib/site";
 
-const CARDS = [
-  {
-    title: "OpenSea",
-    subtitle: "Enter the Ecosystem",
-    href: LINKS.opensea,
-    external: true,
-    highlight: false,
-    icon: (
-      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#2081E2] shadow-[0_0_24px_rgba(32,129,226,0.35)]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/images/icons/opensea-white.svg" alt="" className="h-7 w-7" />
-      </span>
-    ),
-  },
+const CHANNELS = [
   {
     title: "Discord",
     subtitle: "Become a Member",
+    description: "Meet the community, follow updates, and take part in the journey.",
     href: LINKS.discord,
-    external: true,
-    highlight: false,
     icon: (
       <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#5865F2] shadow-[0_0_24px_rgba(88,101,242,0.35)]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -34,10 +20,9 @@ const CARDS = [
   },
   {
     title: "X",
-    subtitle: "Follow on X",
+    subtitle: "Follow the Story",
+    description: "News, moments, and the next chapter as Artanova grows.",
     href: LINKS.x,
-    external: true,
-    highlight: false,
     icon: (
       <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/20">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -46,30 +31,30 @@ const CARDS = [
     ),
   },
   {
-    title: "Shop",
-    subtitle: "Coming Soon",
-    href: "/shop",
-    external: false,
-    highlight: true,
+    title: "OpenSea",
+    subtitle: "Enter the Ecosystem",
+    description: "Ownership is the key — explore the collection that opens the door.",
+    href: LINKS.opensea,
     icon: (
-      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/10 ring-1 ring-gold/45">
-        <ShoppingBag className="h-6 w-6 text-gold" strokeWidth={1.5} />
+      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#2081E2] shadow-[0_0_24px_rgba(32,129,226,0.35)]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/images/icons/opensea-white.svg" alt="" className="h-7 w-7" />
       </span>
     ),
   },
 ] as const;
 
-export default function Connect() {
+export default function Community() {
   const reduceMotion = useSafeReducedMotion();
 
   return (
-    <section id="connect" className="section-pad relative overflow-hidden">
+    <section className="relative min-h-screen overflow-hidden bg-bg-black pt-24 md:pt-28">
       <div
         className="pointer-events-none absolute left-1/2 top-1/3 h-[420px] w-[720px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-navy/50 blur-[130px]"
         aria-hidden
       />
 
-      <div className="relative mx-auto max-w-7xl px-5 md:px-8 lg:px-10">
+      <div className="section-pad relative mx-auto max-w-7xl px-5 md:px-8 lg:px-10">
         <div className="mx-auto max-w-2xl text-center">
           <motion.p
             initial={reduceMotion ? false : { opacity: 0, y: 14 }}
@@ -78,10 +63,10 @@ export default function Connect() {
             transition={{ duration: reduceMotion ? 0 : 0.55 }}
             className="mb-4 text-[11px] font-medium uppercase tracking-wide-label text-gold md:text-xs"
           >
-            CONNECT WITH ARTANOVA
+            COMMUNITY
           </motion.p>
 
-          <motion.h2
+          <motion.h1
             initial={reduceMotion ? false : { opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
@@ -89,7 +74,7 @@ export default function Connect() {
             className="font-display text-3xl text-text-primary sm:text-4xl md:text-5xl"
           >
             Be Part of This.
-          </motion.h2>
+          </motion.h1>
 
           <motion.p
             initial={reduceMotion ? false : { opacity: 0, y: 12 }}
@@ -98,15 +83,15 @@ export default function Connect() {
             transition={{ duration: reduceMotion ? 0 : 0.55, delay: reduceMotion ? 0 : 0.12 }}
             className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-text-muted md:text-base"
           >
-            Join the people shaping Artanova — through community, experiences,
-            and ownership that grows over time.
+            Artanova is built with people at the center — through shared
+            experiences, real connections, and ownership that grows over time.
           </motion.p>
         </div>
 
-        <ul className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:mt-16 lg:grid-cols-4 lg:gap-5">
-          {CARDS.map((card, i) => (
+        <ul className="mx-auto mt-12 grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5 lg:mt-16">
+          {CHANNELS.map((channel, i) => (
             <motion.li
-              key={card.title}
+              key={channel.title}
               initial={reduceMotion ? false : { opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
@@ -116,24 +101,20 @@ export default function Connect() {
               }}
             >
               <a
-                href={card.href}
-                {...(card.external
-                  ? { target: "_blank", rel: "noopener noreferrer" }
-                  : {})}
-                className={`group flex h-full min-h-[220px] flex-col items-center rounded-2xl bg-bg-panel p-7 text-center transition-all duration-300 md:p-8 ${
-                  card.highlight
-                    ? "border border-gold/50 hover:border-gold"
-                    : "border border-white/10 hover:border-gold/40"
-                }`}
+                href={channel.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex h-full min-h-[240px] flex-col items-center rounded-2xl border border-white/10 bg-bg-panel p-7 text-center transition-all duration-300 hover:border-gold/40 md:p-8"
               >
-                <div className="mb-6 flex justify-center">{card.icon}</div>
-
-                <h3 className="font-display text-xl text-text-primary md:text-2xl">
-                  {card.title}
-                </h3>
-                <p className="mt-1.5 text-sm text-text-muted">{card.subtitle}</p>
-
-                <span className="mt-auto flex justify-center pt-10 text-gold">
+                <div className="mb-6 flex justify-center">{channel.icon}</div>
+                <h2 className="font-display text-xl text-text-primary md:text-2xl">
+                  {channel.title}
+                </h2>
+                <p className="mt-1.5 text-sm font-medium text-gold">{channel.subtitle}</p>
+                <p className="mt-3 text-sm leading-relaxed text-text-muted">
+                  {channel.description}
+                </p>
+                <span className="mt-auto flex justify-center pt-8 text-gold">
                   <ArrowRight
                     size={18}
                     strokeWidth={1.75}

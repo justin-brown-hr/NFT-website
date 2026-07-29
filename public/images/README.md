@@ -20,7 +20,7 @@ Open [http://localhost:3001](http://localhost:3001).
 
 ## Assets
 
-Drop final artwork into `public/images/` (colored placeholders are already there):
+Drop final artwork into `public/images/`:
 
 | File | Used in |
 |------|---------|

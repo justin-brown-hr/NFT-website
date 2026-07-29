@@ -12,6 +12,8 @@ module.exports = {
         "bg-panel": "#0F0B14",
         navy: "#0A1628",
         "navy-deep": "#06101C",
+        aqua: "#4DB8D9",
+        "aqua-glow": "#7AD4F0",
         "purple-primary": "#6B3FA0",
         "purple-glow": "#8B5CF6",
         gold: "#E8B75C",

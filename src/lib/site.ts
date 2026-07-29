@@ -5,8 +5,7 @@
 
 export const BRAND = {
   name: "Artanova",
-  /** Client prefers no tagline on the live site */
-  tagline: null as string | null,
+  tagline: "A community-driven ecosystem",
 } as const;
 
 export const LINKS = {
@@ -15,20 +14,51 @@ export const LINKS = {
   x: "https://x.com/ArtanovaN92268",
 } as const;
 
-/** Primary single-page navigation */
+/** Primary multi-page navigation */
 export const NAV_LINKS = [
-  { label: "HOME", href: "#home", external: false },
+  { label: "ABOUT", href: "/about", external: false },
+  { label: "JOURNEY", href: "/journey", external: false },
+  { label: "COMMUNITY", href: "/community", external: false },
+  { label: "VISION", href: "/future-vision", external: false },
   { label: "COLLECTION", href: LINKS.opensea, external: true },
-  { label: "ABOUT", href: "#about", external: false },
-  { label: "VISION", href: "#vision", external: false },
-  { label: "CONNECT", href: "#connect", external: false },
+] as const;
+
+/** Homepage explore destinations — full names for a premium brand portal feel */
+export const EXPLORE_LINKS = [
+  { label: "About", href: "/about", external: false, description: "Who we are" },
+  { label: "The Journey", href: "/journey", external: false, description: "Three phases" },
+  { label: "Community", href: "/community", external: false, description: "Join us" },
+  { label: "Collection", href: LINKS.opensea, external: true, description: "On OpenSea" },
+  { label: "Future Vision", href: "/future-vision", external: false, description: "Where we go" },
 ] as const;
 
 export const FOOTER_LINKS = [
+  { label: "ABOUT", href: "/about", external: false },
+  { label: "JOURNEY", href: "/journey", external: false },
+  { label: "COMMUNITY", href: "/community", external: false },
+  { label: "VISION", href: "/future-vision", external: false },
   { label: "COLLECTION", href: LINKS.opensea, external: true },
-  { label: "ABOUT", href: "#about", external: false },
-  { label: "VISION", href: "#vision", external: false },
-  { label: "CONNECT", href: "#connect", external: false },
+] as const;
+
+export const PHASES = [
+  {
+    phase: "01",
+    title: "The Beginning",
+    summary:
+      "Our first collection introduces original characters and a comic universe — bringing together people who believe in creativity, innovation, and community. Holders join the Artanova journey from day one.",
+  },
+  {
+    phase: "02",
+    title: "Adventure",
+    summary:
+      "The story expands as the community steps into the real world — travel experiences, shared adventures, and interactive activities that connect members beyond the digital space.",
+  },
+  {
+    phase: "03",
+    title: "Real-World Investments",
+    summary:
+      "Artanova becomes a community with ownership in real-world assets. Members participate in investments and projects that create lasting value beyond NFTs.",
+  },
 ] as const;
 
 /**
@@ -39,6 +69,5 @@ export const FUTURE_ROUTES = [
   { slug: "comic", path: "/comic", label: "Comic", description: "Story & comic series" },
   { slug: "shop", path: "/shop", label: "Merchandise", description: "Official merchandise" },
   { slug: "events", path: "/events", label: "Events", description: "Drops and gatherings" },
-  { slug: "community", path: "/community", label: "Community", description: "Community hub" },
   { slug: "token", path: "/token", label: "Token", description: "Token information" },
 ] as const;

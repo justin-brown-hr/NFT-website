@@ -7,7 +7,7 @@ type Props = {
 
 export function ComingSoon({ title }: Props) {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-bg-black px-6 text-center">
+    <main className="flex min-h-[70vh] flex-col items-center justify-center bg-bg-black px-6 pb-24 pt-32 text-center">
       <p className="mb-4 text-[11px] font-medium uppercase tracking-wide-label text-gold">
         Artanova
       </p>
@@ -25,7 +25,7 @@ export function ComingSoon({ title }: Props) {
 
 export function comingSoonMetadata(title: string): Metadata {
   return {
-    title: `${title} — Artanova`,
+    title,
     description: `${title} is coming soon to Artanova.`,
   };
 }

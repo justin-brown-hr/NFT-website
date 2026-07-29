@@ -1,7 +1,16 @@
-import { ComingSoon, comingSoonMetadata } from "@/components/ComingSoon";
+import type { Metadata } from "next";
+import Community from "@/components/Community";
 
-export const metadata = comingSoonMetadata("Community");
+export const metadata: Metadata = {
+  title: "Community",
+  description:
+    "Join the Artanova community — people building shared experiences, connections, and ownership that grows over time.",
+};
 
 export default function CommunityPage() {
-  return <ComingSoon title="Community" />;
+  return (
+    <main>
+      <Community />
+    </main>
+  );
 }

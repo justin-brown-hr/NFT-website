@@ -27,5 +27,3 @@ Drop these files into `public/images/`:
 | `logo-hummingbird.png` | Nav + Footer |
 | `hero-gallery.jpg` | Hero full-bleed background |
 | `portrait-about.jpg` | About section portrait |
-
-Until the JPGs are present, colored gradient fallbacks keep the layout intact.

@@ -1,9 +1,10 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { useSafeReducedMotion } from "@/hooks/useSafeReducedMotion";
-import { LINKS } from "@/lib/site";
+import { EXPLORE_LINKS } from "@/lib/site";
+import OceanAtmosphere from "@/components/OceanAtmosphere";
 
 export default function Hero() {
   const reduceMotion = useSafeReducedMotion();
@@ -18,10 +19,8 @@ export default function Hero() {
         };
 
   return (
-    <section
-      id="home"
-      className="relative flex min-h-screen items-center justify-center overflow-hidden"
-    >
+    <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
+      {/* Original hero image — full bleed */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
@@ -41,6 +40,9 @@ export default function Hero() {
         />
       </div>
 
+      {/* Animation layer — particles, light rays, ripples (one scene with the image) */}
+      <OceanAtmosphere />
+
       <div
         className="absolute inset-0"
         style={{
@@ -59,7 +61,7 @@ export default function Hero() {
         aria-hidden
       />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-5 pb-16 pt-28 text-center md:px-8 md:pt-32">
+      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-5 pb-20 pt-28 text-center md:px-8 md:pb-24 md:pt-32">
         <motion.p
           {...fadeUp(0.1)}
           className="mb-5 text-[11px] font-medium uppercase tracking-wide-label text-gold md:text-xs"
@@ -71,9 +73,9 @@ export default function Hero() {
           {...fadeUp(0.25)}
           className="font-display text-[2.75rem] leading-[1.1] tracking-tight text-text-primary sm:text-5xl md:text-6xl lg:text-7xl"
         >
-          Where Imagination
+          Where Vision
           <br />
-          <span className="text-gold">Becomes Art</span>
+          <span className="text-gold">Becomes Reality</span>
         </motion.h1>
 
         <motion.div
@@ -84,26 +86,47 @@ export default function Hero() {
 
         <motion.p
           {...fadeUp(0.5)}
-          className="mt-6 max-w-lg text-sm leading-relaxed text-text-muted md:mt-8 md:text-base"
+          className="mt-6 max-w-xl text-sm leading-relaxed text-text-muted md:mt-8 md:text-base"
         >
-          A curated world of original art — refined, intentional, and made for
-          those who value craft over noise.
+          A community-driven ecosystem where digital ownership unlocks
+          storytelling, shared experiences, and long-term value.
         </motion.p>
 
-        <motion.a
-          {...fadeUp(0.65)}
-          href={LINKS.opensea}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group mt-10 inline-flex items-center gap-3 bg-gold px-7 py-3.5 text-xs font-semibold uppercase tracking-cta text-bg-black transition-colors hover:bg-gold-bright md:mt-12 md:px-8 md:py-4 md:text-[13px]"
+        <motion.nav
+          {...fadeUp(0.7)}
+          aria-label="Explore Artanova"
+          className="mt-12 w-full max-w-3xl md:mt-14"
         >
-          VIEW COLLECTION ON OPENSEA
-          <ArrowRight
-            size={16}
-            strokeWidth={2}
-            className="transition-transform duration-300 group-hover:translate-x-1"
-          />
-        </motion.a>
+          <ul className="flex flex-wrap items-center justify-center gap-x-1 gap-y-3 sm:gap-x-0">
+            {EXPLORE_LINKS.map((link, i) => (
+              <li key={link.label} className="flex items-center">
+                {i > 0 && (
+                  <span
+                    className="mx-3 hidden h-3 w-px bg-white/20 sm:mx-4 sm:block md:mx-5"
+                    aria-hidden
+                  />
+                )}
+                {link.external ? (
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group px-2 py-1 text-xs font-medium uppercase tracking-wide-label text-text-primary transition-colors hover:text-gold md:text-[13px]"
+                  >
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link
+                    href={link.href}
+                    className="group px-2 py-1 text-xs font-medium uppercase tracking-wide-label text-text-primary transition-colors hover:text-gold md:text-[13px]"
+                  >
+                    {link.label}
+                  </Link>
+                )}
+              </li>
+            ))}
+          </ul>
+        </motion.nav>
       </div>
     </section>
   );

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Manrope, Petit_Formal_Script } from "next/font/google";
+import Nav from "@/components/Nav";
+import Footer from "@/components/Footer";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -22,9 +24,12 @@ const petitFormal = Petit_Formal_Script({
 });
 
 export const metadata: Metadata = {
-  title: "Artanova",
+  title: {
+    default: "Artanova",
+    template: "%s — Artanova",
+  },
   description:
-    "Artanova — a curated world of original art. Refined, intentional, and made for those who value craft.",
+    "Artanova is a community-driven ecosystem where digital ownership unlocks storytelling, shared experiences, and long-term value.",
   icons: {
     icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
     shortcut: "/favicon.svg",
@@ -43,7 +48,9 @@ export default function RootLayout({
         className={`${playfair.variable} ${manrope.variable} ${petitFormal.variable} font-sans antialiased bg-bg-black text-text-primary`}
         suppressHydrationWarning
       >
+        <Nav />
         {children}
+        <Footer />
       </body>
     </html>
   );

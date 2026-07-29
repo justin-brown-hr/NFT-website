@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
@@ -8,8 +10,8 @@ import { useSafeReducedMotion } from "@/hooks/useSafeReducedMotion";
 import { NAV_LINKS } from "@/lib/site";
 
 export default function Nav() {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
-  const [active, setActive] = useState("HOME");
   const [menuOpen, setMenuOpen] = useState(false);
   const reduceMotion = useSafeReducedMotion();
 
@@ -21,27 +23,8 @@ export default function Nav() {
   }, []);
 
   useEffect(() => {
-    const sectionIds = ["home", "about", "vision", "connect"];
-    const observers: IntersectionObserver[] = [];
-
-    sectionIds.forEach((id) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            const link = NAV_LINKS.find((l) => l.href === `#${id}`);
-            if (link) setActive(link.label);
-          }
-        },
-        { rootMargin: "-40% 0px -50% 0px", threshold: 0 }
-      );
-      observer.observe(el);
-      observers.push(observer);
-    });
-
-    return () => observers.forEach((o) => o.disconnect());
-  }, []);
+    setMenuOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
@@ -50,10 +33,7 @@ export default function Nav() {
     };
   }, [menuOpen]);
 
-  const handleNavClick = (label: string) => {
-    setActive(label);
-    setMenuOpen(false);
-  };
+  const isActive = (href: string) => pathname === href;
 
   return (
     <>
@@ -65,11 +45,7 @@ export default function Nav() {
         }`}
       >
         <nav className="mx-auto flex h-24 max-w-7xl items-center justify-between px-5 md:h-28 md:px-8 lg:px-10">
-          <a
-            href="#home"
-            className="group flex items-center"
-            onClick={() => handleNavClick("HOME")}
-          >
+          <Link href="/" className="group flex items-center" onClick={() => setMenuOpen(false)}>
             <Image
               src="/images/logo-hummingbird.png"
               alt="Artanova"
@@ -78,30 +54,37 @@ export default function Nav() {
               priority
               className="h-20 w-auto object-contain object-left md:h-24"
             />
-          </a>
+          </Link>
 
-          <ul className="hidden items-center gap-8 lg:flex">
+          <ul className="hidden items-center gap-7 xl:gap-8 lg:flex">
             {NAV_LINKS.map((link) => (
               <li key={link.label}>
-                <a
-                  href={link.href}
-                  onClick={() => handleNavClick(link.label)}
-                  {...(link.external
-                    ? { target: "_blank", rel: "noopener noreferrer" }
-                    : {})}
-                  className={`relative pb-1 text-xs font-medium tracking-wide-label transition-colors ${
-                    active === link.label
-                      ? "text-text-primary"
-                      : "text-text-muted hover:text-text-primary"
-                  }`}
-                >
-                  {link.label}
-                  <span
-                    className={`absolute bottom-0 left-0 h-px w-full origin-left bg-gold transition-transform duration-300 ${
-                      active === link.label ? "scale-x-100" : "scale-x-0"
+                {link.external ? (
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative pb-1 text-xs font-medium tracking-wide-label text-text-muted transition-colors hover:text-text-primary"
+                  >
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link
+                    href={link.href}
+                    className={`relative pb-1 text-xs font-medium tracking-wide-label transition-colors ${
+                      isActive(link.href)
+                        ? "text-text-primary"
+                        : "text-text-muted hover:text-text-primary"
                     }`}
-                  />
-                </a>
+                  >
+                    {link.label}
+                    <span
+                      className={`absolute bottom-0 left-0 h-px w-full origin-left bg-gold transition-transform duration-300 ${
+                        isActive(link.href) ? "scale-x-100" : "scale-x-0"
+                      }`}
+                    />
+                  </Link>
+                )}
               </li>
             ))}
           </ul>
@@ -111,7 +94,7 @@ export default function Nav() {
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
-            className="flex h-10 w-10 items-center justify-center text-text-primary transition-colors hover:text-gold"
+            className="flex h-10 w-10 items-center justify-center text-text-primary transition-colors hover:text-gold lg:hidden"
           >
             {menuOpen ? <X size={22} strokeWidth={1.5} /> : <Menu size={22} strokeWidth={1.5} />}
           </button>
@@ -125,27 +108,52 @@ export default function Nav() {
             animate={{ x: 0 }}
             exit={reduceMotion ? undefined : { x: "100%" }}
             transition={{ type: "tween", duration: reduceMotion ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-40 flex flex-col bg-bg-black/95 backdrop-blur-lg"
+            className="fixed inset-0 z-40 flex flex-col bg-bg-black/95 backdrop-blur-lg lg:hidden"
           >
-            <div className="flex flex-1 flex-col items-center justify-center gap-8 px-6">
-              {NAV_LINKS.map((link, i) => (
-                <motion.a
-                  key={link.label}
-                  href={link.href}
-                  onClick={() => handleNavClick(link.label)}
-                  {...(link.external
-                    ? { target: "_blank", rel: "noopener noreferrer" }
-                    : {})}
-                  initial={reduceMotion ? false : { opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: reduceMotion ? 0 : 0.05 * i + 0.1 }}
-                  className={`font-display text-3xl tracking-wide ${
-                    active === link.label ? "text-gold" : "text-text-primary"
-                  }`}
-                >
-                  {link.label}
-                </motion.a>
-              ))}
+            <div className="flex flex-1 flex-col items-center justify-center gap-8 px-6 pt-24">
+              <Link
+                href="/"
+                onClick={() => setMenuOpen(false)}
+                className={`font-display text-3xl tracking-wide ${
+                  pathname === "/" ? "text-gold" : "text-text-primary"
+                }`}
+              >
+                HOME
+              </Link>
+              {NAV_LINKS.map((link, i) =>
+                link.external ? (
+                  <motion.a
+                    key={link.label}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMenuOpen(false)}
+                    initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: reduceMotion ? 0 : 0.05 * i + 0.1 }}
+                    className="font-display text-3xl tracking-wide text-text-primary"
+                  >
+                    {link.label}
+                  </motion.a>
+                ) : (
+                  <motion.div
+                    key={link.label}
+                    initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: reduceMotion ? 0 : 0.05 * i + 0.1 }}
+                  >
+                    <Link
+                      href={link.href}
+                      onClick={() => setMenuOpen(false)}
+                      className={`font-display text-3xl tracking-wide ${
+                        isActive(link.href) ? "text-gold" : "text-text-primary"
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  </motion.div>
+                )
+              )}
             </div>
           </motion.div>
         )}

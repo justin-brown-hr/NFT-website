@@ -7,7 +7,7 @@ function HexIcon({ children }: { children: React.ReactNode }) {
   return (
     <svg
       viewBox="0 0 48 48"
-      className="h-12 w-12 text-gold"
+      className="h-11 w-11 text-gold"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden
@@ -22,18 +22,6 @@ function HexIcon({ children }: { children: React.ReactNode }) {
   );
 }
 
-function FeatherGlyph() {
-  return (
-    <g stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M24 14 C28 18 30 24 28 32 L20 32 C18 24 20 18 24 14 Z" fill="none" />
-      <path d="M24 16 L24 32" />
-      <path d="M21 20 L27 22" />
-      <path d="M20.5 24 L27.5 26" />
-      <path d="M20.5 28 L27.5 30" />
-    </g>
-  );
-}
-
 function CommunityGlyph() {
   return (
     <g stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none">
@@ -45,33 +33,68 @@ function CommunityGlyph() {
   );
 }
 
-function HourglassGlyph() {
+function VisionGlyph() {
   return (
-    <g stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" fill="none">
-      <path d="M18 15 H30" />
-      <path d="M18 33 H30" />
-      <path d="M19 15 C19 15 19 20 24 24 C29 28 29 33 29 33" />
-      <path d="M29 15 C29 15 29 20 24 24 C19 28 19 33 19 33" />
-      <path d="M22 29 H26" opacity="0.7" />
+    <g stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none">
+      <circle cx="24" cy="24" r="6" />
+      <circle cx="24" cy="24" r="2.5" fill="currentColor" stroke="none" />
+      <path d="M24 10 V14 M24 34 V38 M10 24 H14 M34 24 H38" />
     </g>
   );
 }
 
-const FEATURES = [
-  {
-    title: "Original Art",
-    description: "Handcrafted works, limited and intentional.",
-    icon: <FeatherGlyph />,
-  },
+function InnovationGlyph() {
+  return (
+    <g stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" fill="none">
+      <path d="M24 12 L28 22 H36 L30 28 L32 38 L24 32 L16 38 L18 28 L12 22 H20 Z" />
+    </g>
+  );
+}
+
+function OwnershipGlyph() {
+  return (
+    <g stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" fill="none">
+      <rect x="15" y="18" width="18" height="14" rx="1.5" />
+      <path d="M19 18 V16 C19 13.2 21.2 11 24 11 C26.8 11 29 13.2 29 16 V18" />
+      <circle cx="24" cy="25" r="1.5" fill="currentColor" stroke="none" />
+    </g>
+  );
+}
+
+function GrowthGlyph() {
+  return (
+    <g stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" fill="none">
+      <path d="M14 34 L20 24 L26 28 L34 14" />
+      <path d="M28 14 H34 V20" />
+    </g>
+  );
+}
+
+const PILLARS = [
   {
     title: "Community",
-    description: "A circle of collectors and creatives.",
+    description: "People at the center — building, sharing, and growing together.",
     icon: <CommunityGlyph />,
   },
   {
-    title: "Future-Ready",
-    description: "Designed to grow with the brand.",
-    icon: <HourglassGlyph />,
+    title: "Shared Vision",
+    description: "One direction: meaningful connection and lasting impact.",
+    icon: <VisionGlyph />,
+  },
+  {
+    title: "Innovation",
+    description: "Storytelling and new ideas that push the ecosystem forward.",
+    icon: <InnovationGlyph />,
+  },
+  {
+    title: "Digital Ownership",
+    description: "NFTs as the key to access, participation, and belonging.",
+    icon: <OwnershipGlyph />,
+  },
+  {
+    title: "Long-Term Growth",
+    description: "Built in phases — from digital world to real-world value.",
+    icon: <GrowthGlyph />,
   },
 ] as const;
 
@@ -79,13 +102,9 @@ export default function About() {
   const reduceMotion = useSafeReducedMotion();
 
   return (
-    <section
-      id="about"
-      className="relative overflow-hidden bg-bg-black"
-    >
+    <section className="relative min-h-screen overflow-hidden bg-bg-black pt-24 md:pt-28">
       {/* Background portrait — right side, soft-blended edges */}
       <div
-        id="vision"
         className="pointer-events-none absolute inset-y-0 right-0 w-full md:w-[58%] lg:w-[55%]"
         aria-hidden
       >
@@ -104,12 +123,10 @@ export default function About() {
           />
         </motion.div>
 
-        {/* Soft purple smoke behind / around subject */}
         <div className="absolute inset-0 bg-purple-primary/15 mix-blend-screen" />
         <div className="absolute -left-10 top-1/4 h-3/4 w-2/3 rounded-full bg-purple-glow/25 blur-[80px]" />
         <div className="absolute bottom-0 right-0 h-1/2 w-1/2 rounded-full bg-purple-primary/30 blur-[90px]" />
 
-        {/* Feather into black — left edge (main blend) */}
         <div
           className="absolute inset-0"
           style={{
@@ -117,7 +134,6 @@ export default function About() {
               "linear-gradient(90deg, #08060B 0%, #08060B 8%, rgba(8,6,11,0.92) 22%, rgba(8,6,11,0.55) 40%, rgba(8,6,11,0.15) 62%, transparent 82%)",
           }}
         />
-        {/* Feather top & bottom */}
         <div
           className="absolute inset-0"
           style={{
@@ -125,7 +141,6 @@ export default function About() {
               "linear-gradient(180deg, #08060B 0%, transparent 18%, transparent 72%, #08060B 100%)",
           }}
         />
-        {/* Extra left soft mask for seamless bleed */}
         <div
           className="absolute inset-y-0 left-0 w-[45%]"
           style={{
@@ -135,7 +150,6 @@ export default function About() {
         />
       </div>
 
-      {/* Mobile: darkened overlay so text stays readable over full-bleed image */}
       <div
         className="pointer-events-none absolute inset-0 md:hidden"
         style={{
@@ -146,7 +160,7 @@ export default function About() {
       />
 
       <div className="section-pad relative z-10 mx-auto max-w-7xl px-5 md:px-8 lg:px-10">
-        <div className="max-w-xl lg:max-w-[48%]">
+        <div className="max-w-xl lg:max-w-[52%]">
           <motion.p
             initial={reduceMotion ? false : { opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -157,17 +171,17 @@ export default function About() {
             ABOUT ARTANOVA
           </motion.p>
 
-          <motion.h2
+          <motion.h1
             initial={reduceMotion ? false : { opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: reduceMotion ? 0 : 0.7, delay: reduceMotion ? 0 : 0.1 }}
             className="font-display text-3xl leading-tight text-text-primary sm:text-4xl md:text-5xl"
           >
-            Art That Inspires.
+            More Than a Collection.
             <br />
-            A Vision That Lasts.
-          </motion.h2>
+            A Movement to Join.
+          </motion.h1>
 
           <motion.div
             initial={reduceMotion ? false : { scaleX: 0 }}
@@ -185,29 +199,30 @@ export default function About() {
             transition={{ duration: reduceMotion ? 0 : 0.6, delay: reduceMotion ? 0 : 0.2 }}
             className="mt-6 max-w-md text-sm leading-relaxed text-text-primary/90 md:text-base"
           >
-            Artanova is more than art. It is a vision of beauty, craft, and
-            connection — curated with the care of a private gallery.
+            Artwork is only the starting point. Artanova is a community-driven
+            ecosystem where digital ownership creates real-life experiences,
+            meaningful connections, and long-term value.
           </motion.p>
 
-          <ul className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-6 md:mt-14">
-            {FEATURES.map((feature, i) => (
+          <ul className="mt-12 grid grid-cols-1 gap-7 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-8 md:mt-14">
+            {PILLARS.map((pillar, i) => (
               <motion.li
-                key={feature.title}
+                key={pillar.title}
                 initial={reduceMotion ? false : { opacity: 0, y: 18 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{
                   duration: reduceMotion ? 0 : 0.55,
-                  delay: reduceMotion ? 0 : 0.12 * i + 0.15,
+                  delay: reduceMotion ? 0 : 0.08 * i + 0.15,
                 }}
                 className="flex flex-col items-start"
               >
-                <HexIcon>{feature.icon}</HexIcon>
-                <h3 className="mt-4 text-sm font-semibold text-gold md:text-base">
-                  {feature.title}
+                <HexIcon>{pillar.icon}</HexIcon>
+                <h3 className="mt-3 text-sm font-semibold text-gold md:text-base">
+                  {pillar.title}
                 </h3>
-                <p className="mt-1.5 text-sm leading-snug text-text-muted">
-                  {feature.description}
+                <p className="mt-1 text-sm leading-snug text-text-muted">
+                  {pillar.description}
                 </p>
               </motion.li>
             ))}

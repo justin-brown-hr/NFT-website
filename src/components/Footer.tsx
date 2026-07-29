@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { FOOTER_LINKS, LINKS } from "@/lib/site";
 
 export default function Footer() {
@@ -8,7 +9,7 @@ export default function Footer() {
         {/* Desktop: 3 columns with vertical dividers */}
         <div className="hidden items-center lg:grid lg:grid-cols-[auto_1fr_auto]">
           <div className="pr-8 xl:pr-10">
-            <a href="#home" className="inline-flex items-center">
+            <Link href="/" className="inline-flex items-center">
               <Image
                 src="/images/logo-hummingbird.png"
                 alt="Artanova"
@@ -16,7 +17,7 @@ export default function Footer() {
                 height={80}
                 className="h-14 w-auto object-contain object-left xl:h-16"
               />
-            </a>
+            </Link>
             <p className="mt-1.5 text-[11px] text-text-muted/70">
               © 2026 Artanova. All rights reserved.
             </p>
@@ -26,15 +27,23 @@ export default function Footer() {
             <ul className="flex flex-wrap items-center justify-center gap-x-7 gap-y-1 xl:gap-x-8">
               {FOOTER_LINKS.map((link) => (
                 <li key={link.label}>
-                  <a
-                    href={link.href}
-                    {...(link.external
-                      ? { target: "_blank", rel: "noopener noreferrer" }
-                      : {})}
-                    className="text-xs font-medium tracking-wide-label text-text-primary transition-colors hover:text-gold"
-                  >
-                    {link.label}
-                  </a>
+                  {link.external ? (
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-medium tracking-wide-label text-text-primary transition-colors hover:text-gold"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className="text-xs font-medium tracking-wide-label text-text-primary transition-colors hover:text-gold"
+                    >
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
@@ -71,7 +80,7 @@ export default function Footer() {
         {/* Mobile / tablet */}
         <div className="flex flex-col gap-5 lg:hidden">
           <div>
-            <a href="#home" className="inline-flex self-start">
+            <Link href="/" className="inline-flex self-start">
               <Image
                 src="/images/logo-hummingbird.png"
                 alt="Artanova"
@@ -79,7 +88,7 @@ export default function Footer() {
                 height={80}
                 className="h-12 w-auto object-contain object-left sm:h-14"
               />
-            </a>
+            </Link>
             <p className="mt-1.5 text-[11px] text-text-muted/70">
               © 2026 Artanova. All rights reserved.
             </p>
@@ -89,15 +98,23 @@ export default function Footer() {
             <ul className="flex flex-wrap gap-x-5 gap-y-2">
               {FOOTER_LINKS.map((link) => (
                 <li key={link.label}>
-                  <a
-                    href={link.href}
-                    {...(link.external
-                      ? { target: "_blank", rel: "noopener noreferrer" }
-                      : {})}
-                    className="text-xs font-medium tracking-wide-label text-text-primary transition-colors hover:text-gold"
-                  >
-                    {link.label}
-                  </a>
+                  {link.external ? (
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-medium tracking-wide-label text-text-primary transition-colors hover:text-gold"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className="text-xs font-medium tracking-wide-label text-text-primary transition-colors hover:text-gold"
+                    >
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
