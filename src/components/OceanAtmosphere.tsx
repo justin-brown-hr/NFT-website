@@ -41,20 +41,6 @@ type Ray = {
   phase: number;
 };
 
-/** A click-spawned ripple burst — more rings, brighter, instant start */
-type ClickRipple = {
-  x: number;
-  y: number;
-  rings: {
-    radius: number;
-    maxRadius: number;
-    alpha: number;
-    speed: number;
-    lineWidth: number;
-    hue: number; // aqua=195, gold=46
-  }[];
-};
-
 export default function OceanAtmosphere() {
   const reduceMotion = useSafeReducedMotion();
   const canvasRef = useRef<HTMLCanvasElement>(null);
