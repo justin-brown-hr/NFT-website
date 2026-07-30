@@ -113,35 +113,14 @@ export default function Hero() {
                   />
                 )}
                 {link.label === "Nerina Collection" ? (
-                  /* ── Collection — Nerina call-to-action ── */
-                  <div className="flex flex-col items-center gap-1.5">
-                    <a
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group relative px-2 py-1 text-xs font-medium uppercase tracking-wide-label text-gold transition-colors hover:text-gold-bright md:text-[13px]"
-                    >
-                      {link.label}
-                      <span className="absolute inset-x-2 -bottom-0.5 h-px origin-left scale-x-0 bg-gold transition-transform duration-300 group-hover:scale-x-100" aria-hidden />
-                    </a>
-                    <a
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="Click Nerina — enter the collection"
-                      className="group flex items-center gap-1.5 rounded-full border border-gold/25 bg-gold/8 px-2.5 py-1 transition-all duration-300 hover:border-gold/55 hover:bg-gold/14"
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src="/images/icon-hummingbird.svg"
-                        alt=""
-                        className="h-3.5 w-3.5 animate-nerina-flutter opacity-80 transition-opacity duration-300 group-hover:opacity-100"
-                      />
-                      <span className="text-[10px] font-medium tracking-widest text-gold/80 transition-colors duration-300 group-hover:text-gold md:text-[11px]">
-                        Click Nerina
-                      </span>
-                    </a>
-                  </div>
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group px-2 py-1 text-xs font-medium uppercase tracking-wide-label text-text-primary transition-colors hover:text-gold md:text-[13px]"
+                  >
+                    {link.label}
+                  </a>
                 ) : link.external ? (
                   <a
                     href={link.href}
