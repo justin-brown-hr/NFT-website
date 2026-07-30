@@ -61,7 +61,7 @@ const BENEFITS = [
     icon: BookOpen,
     label: "Comic Universe",
     description:
-      "Each NFT unlocks chapters of Artanova's expanding comic — your token, your place in the story.",
+      "Every NFT unlocks the next chapter of Artanova's original story, following the journey of Artanova.",
     accent: "rgba(139,92,246,0.18)",
     iconColor: "#8b5cf6",
   },
@@ -69,7 +69,7 @@ const BENEFITS = [
     icon: Gift,
     label: "Real-World Rewards",
     description:
-      "Holder drops, surprise packages, and tangible perks delivered to members who show up.",
+      "Holders compete in exclusive real-world and online challenges to earn prizes, experiences, and unique rewards.",
     accent: "rgba(232,183,92,0.18)",
     iconColor: "#e8b75c",
   },
@@ -77,7 +77,7 @@ const BENEFITS = [
     icon: ShoppingBag,
     label: "Exclusive Merchandise",
     description:
-      "Limited Artanova apparel and collectibles — only available to token holders, never in open retail.",
+      "Holder-exclusive merchandise with special discounts, plus occasional gifts for lucky community members.",
     accent: "rgba(77,184,217,0.18)",
     iconColor: "#7ad4f0",
   },
@@ -136,7 +136,7 @@ export default function Community() {
           </motion.p>
 
           <motion.h2 {...fadeUp(0.08)} className="font-display text-3xl text-text-primary sm:text-4xl md:text-5xl">
-            Be Part of This.
+            Be Part of the Few.
           </motion.h2>
 
           <motion.p {...fadeUp(0.14)} className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-text-muted md:text-base">
