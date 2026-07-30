@@ -14,15 +14,6 @@ type Particle = {
   hue: number;
 };
 
-type Ripple = {
-  x: number;
-  y: number;
-  radius: number;
-  maxRadius: number;
-  alpha: number;
-  speed: number;
-};
-
 type Caustic = {
   x: number;
   y: number;
@@ -56,22 +47,12 @@ export default function OceanAtmosphere() {
     let frame = 0;
     let raf = 0;
     let particles: Particle[] = [];
-    let ripples: Ripple[] = [];
     let caustics: Caustic[] = [];
     let rays: Ray[] = [];
     let canvasW = 0;
     let canvasH = 0;
 
     const rand = (min: number, max: number) => min + Math.random() * (max - min);
-
-    const spawnRipple = (w: number, h: number): Ripple => ({
-      x: rand(w * 0.1, w * 0.9),
-      y: rand(h * 0.42, h * 0.88),
-      radius: rand(2, 12),
-      maxRadius: rand(80, 240),
-      alpha: rand(0.45, 0.85),
-      speed: rand(0.7, 1.8),
-    });
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -115,13 +96,6 @@ export default function OceanAtmosphere() {
         hue: Math.random() < 0.6 ? 195 : Math.random() < 0.5 ? 46 : 270,
         phase: rand(0, Math.PI * 2),
       }));
-
-      // Seed more ripples for immediate impact
-      ripples = Array.from({ length: 5 }, () => {
-        const rp = spawnRipple(canvasW, canvasH);
-        rp.radius = rand(0, rp.maxRadius * 0.5); // stagger start positions
-        return rp;
-      });
     };
 
     const draw = () => {
@@ -208,49 +182,6 @@ export default function OceanAtmosphere() {
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fillStyle = `hsla(${p.hue}, 100%, 92%, ${Math.min(a * 1.3, 1)})`;
         ctx.fill();
-      }
-
-      // ── 4. Water ripple rings ─────────────────────────────────────────────
-      for (let i = ripples.length - 1; i >= 0; i--) {
-        const rp = ripples[i];
-        rp.radius += rp.speed;
-        rp.alpha *= 0.983;
-
-        if (rp.radius > rp.maxRadius || rp.alpha < 0.015) {
-          ripples[i] = spawnRipple(canvasW, canvasH);
-          continue;
-        }
-
-        const fade = 1 - rp.radius / rp.maxRadius;
-        const a = rp.alpha * fade;
-
-        // outer glow ring
-        ctx.beginPath();
-        ctx.ellipse(rp.x, rp.y, rp.radius, rp.radius * 0.3, 0, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(77,184,217,${a * 0.9})`;
-        ctx.lineWidth = 2.2;
-        ctx.stroke();
-
-        // middle ring — slightly inside
-        ctx.beginPath();
-        ctx.ellipse(rp.x, rp.y, rp.radius * 0.78, rp.radius * 0.78 * 0.3, 0, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(122,212,240,${a * 0.55})`;
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
-
-        // gold inner echo
-        if (rp.radius > 25) {
-          ctx.beginPath();
-          ctx.ellipse(rp.x, rp.y, rp.radius * 0.5, rp.radius * 0.5 * 0.3, 0, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(232,183,92,${a * 0.45})`;
-          ctx.lineWidth = 0.9;
-          ctx.stroke();
-        }
-      }
-
-      // Spawn ripples more frequently for density
-      if (frame % 90 === 0 && ripples.length < 12) {
-        ripples.push(spawnRipple(canvasW, canvasH));
       }
 
       raf = requestAnimationFrame(draw);
@@ -372,30 +303,6 @@ export default function OceanAtmosphere() {
         }}
       />
 
-      {/* ── CSS ripple rings — layered for depth ────────────────────────────── */}
-      <div className="absolute inset-x-0 bottom-0 h-[45%]">
-        <div
-          className={`absolute inset-0 mix-blend-soft-light ${reduceMotion ? "opacity-25" : "animate-water-ripple opacity-45"}`}
-          style={{
-            background:
-              "repeating-radial-gradient(ellipse 115% 38% at 50% 115%, transparent 0%, transparent 36%, rgba(77,184,217,0.18) 43%, transparent 52%)",
-          }}
-        />
-        <div
-          className={`absolute inset-0 mix-blend-soft-light ${reduceMotion ? "opacity-18" : "animate-water-ripple-slow opacity-32"}`}
-          style={{
-            background:
-              "repeating-radial-gradient(ellipse 95% 32% at 46% 122%, transparent 0%, transparent 32%, rgba(232,183,92,0.12) 39%, transparent 48%)",
-          }}
-        />
-        <div
-          className={`absolute inset-0 mix-blend-screen ${reduceMotion ? "opacity-10" : "animate-water-ripple-mid opacity-20"}`}
-          style={{
-            background:
-              "repeating-radial-gradient(ellipse 80% 25% at 54% 120%, transparent 0%, transparent 40%, rgba(122,212,240,0.14) 46%, transparent 54%)",
-          }}
-        />
-      </div>
 
     </div>
   );

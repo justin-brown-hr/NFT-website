@@ -20,7 +20,7 @@ export const NAV_LINKS = [
   { label: "JOURNEY", href: "/journey", external: false },
   { label: "COMMUNITY", href: "/community", external: false },
   { label: "VISION", href: "/future-vision", external: false },
-  { label: "COLLECTION", href: LINKS.opensea, external: true },
+  { label: "NERINA COLLECTION", href: LINKS.opensea, external: true },
 ] as const;
 
 /** Homepage explore destinations — full names for a premium brand portal feel */
@@ -28,7 +28,7 @@ export const EXPLORE_LINKS = [
   { label: "About", href: "/about", external: false, description: "Who we are" },
   { label: "The Journey", href: "/journey", external: false, description: "Three phases" },
   { label: "Community", href: "/community", external: false, description: "Join us" },
-  { label: "Collection", href: LINKS.opensea, external: true, description: "On OpenSea" },
+  { label: "Nerina Collection", href: LINKS.opensea, external: true, description: "On OpenSea" },
   { label: "Future Vision", href: "/future-vision", external: false, description: "Where we go" },
 ] as const;
 
@@ -37,7 +37,7 @@ export const FOOTER_LINKS = [
   { label: "JOURNEY", href: "/journey", external: false },
   { label: "COMMUNITY", href: "/community", external: false },
   { label: "VISION", href: "/future-vision", external: false },
-  { label: "COLLECTION", href: LINKS.opensea, external: true },
+  { label: "NERINA COLLECTION", href: LINKS.opensea, external: true },
 ] as const;
 
 export const PHASES = [

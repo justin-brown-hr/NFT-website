@@ -112,7 +112,7 @@ export default function Hero() {
                     aria-hidden
                   />
                 )}
-                {link.label === "Collection" ? (
+                {link.label === "Nerina Collection" ? (
                   /* ── Collection — Nerina call-to-action ── */
                   <div className="flex flex-col items-center gap-1.5">
                     <a
