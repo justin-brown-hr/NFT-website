@@ -24,8 +24,11 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - name: Add CNAME
-        run: echo 'artanova.net' > out/CNAME
+      - name: Configure Pages
+        run: |
+          echo 'artanova.net' > out/CNAME
+          # Without this, GitHub Jekyll omits _next/ and CSS/JS 404
+          touch out/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out

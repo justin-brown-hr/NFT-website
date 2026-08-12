@@ -1,0 +1,11 @@
+artanova.net, www.artanova.net {
+	root * /srv
+	encode gzip
+	file_server
+	try_files {path} {path}/ /index.html
+	header {
+		# Prevent caches from treating this like an IPFS gateway
+		Cache-Control "public, max-age=300"
+		-X-Ipfs-Path
+	}
+}
